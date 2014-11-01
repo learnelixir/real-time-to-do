@@ -1,0 +1,7 @@
+<li data-id='<%= @item.id %>'>
+  <input type='checkbox' id='item_<%= @item.id %>' class='item-done' <%= if @item.done, do: "checked" %> />
+  <span class='item-description'><%= @item.description %></span>
+  <span class='edit-item-description hidden'><input type='text' /></span>
+  <span class='edit-item'>edit</span>
+  <span class='delete-item'>remove</span>
+</li>
