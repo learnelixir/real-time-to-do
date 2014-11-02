@@ -75,7 +75,7 @@ var ToDoApp = {
     this.newItem.off("keypress").on("keypress", function(e){
       if(e.keyCode == 13){
         channel.send("create:item", {
-          description: app.newItem.val(),
+          item: {description: app.newItem.val()}
         });
         app.newItem.val("");
       }
@@ -119,18 +119,18 @@ var ToDoApp = {
     app.toDoListContainer.delegate("span.edit-item-description input", "keypress", function(e) {
       if(e.keyCode == 13) {
         var newDescription = $(this).val();
-        var parent = $(this).parents("li:first");
-        var itemDescription = parent.find("span.item-description");
-        var itemCheckBox = parent.find("input.item-done");
-        var editItemLink = parent.find("span.edit-item");
-        var editItemDescription = parent.find("span.edit-item-description");
+        var itemContainer = $(this).parents("li:first");
+        var itemDescription = itemContainer.find("span.item-description");
+        var itemCheckBox = itemContainer.find("input.item-done");
+        var editItemLink = itemContainer.find("span.edit-item");
+        var editItemDescription = itemContainer.find("span.edit-item-description");
         itemDescription.html(newDescription).toggleClass("hidden");
         editItemDescription.toggleClass("hidden");
         editItemLink.html("edit");
         
         channel.send("update:item", {
           item_id: itemCheckBox.attr("id").replace("item_", ""), 
-          description: newDescription
+          item: { description: newDescription }
         });
       }//end if
     });
@@ -138,9 +138,10 @@ var ToDoApp = {
 
   bindEventsForEditingItem: function() {
     this.toDoListContainer.delegate("span.edit-item", "click", function(e) {
-      var itemDescription = $(this).parent().find("span.item-description");
-      var editItemDescription = $(this).parent().find("span.edit-item-description");
-      itemDescription.toggleClass("hidden"); 
+      var itemContainer = $(this).parent();
+      var itemDescription = itemContainer.find("span.item-description");
+      var editItemDescription = itemContainer.find("span.edit-item-description");
+      itemDescription.toggleClass("hidden");
       editItemDescription.toggleClass("hidden").find("input").val(itemDescription.html()).focus();
       if($(this).hasClass("cancel-edit-item")) {
         $(this).html("edit");
